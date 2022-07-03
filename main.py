@@ -30,16 +30,16 @@ with left_column:
 input_Length1 = st.slider('Vertical length(cm)', 0.0, max(data["Length1"]), 1.0)
 input_Length2 = st.slider('Diagonal length(cm)', 0.0, max(data["Length2"]), 1.0)
 #input_Length3 = st.slider('Cross length(cm)', 0.0, max(data["Length3"]), 1.0)
-input_Length3 = 24.97
+#input_Length3 = 24.97
 input_Height = st.slider('Height(cm)', 0.0, max(data["Height"]), 1.0)
 #input_Width = st.slider('Diagonal width(cm)', 0.0, max(data["Width"]), 1.0)
-input_Width = 3.65785
+#input_Width = 3.65785
 
 
 if st.button('Predict Fish Weight'):
     input_species = encoder.transform(np.expand_dims(inp_species, -1))
     inputs = np.expand_dims(
-        [int(input_species), input_Length1, input_Length2, input_Length3, input_Height, input_Width], 0)
+        [int(input_species), input_Length1, input_Length2,input_Height], 0)
     prediction = best_xgboost_model.predict(inputs)
     print("final pred", np.squeeze(prediction, -1))
     st.write(f"Your fish weight is: {np.squeeze(prediction, -1):.2f}g")
