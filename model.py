@@ -42,7 +42,7 @@ def models_score(model_name, train_data, y_train, val_data, y_val):
         return round(score_MSE, 2), round(score_MAE, 2), round(score_r2score, 2)
 
 data = pd.read_csv("Fish.csv")
-data_cleaned = data.drop("Weight", axis=1)
+data_cleaned = data.drop("Weight","Length3","Width", axis=1)
 y = data['Weight']
 #%%
 x_train, x_test, y_train, y_test = train_test_split(data_cleaned,y, test_size=0.2, random_state=42)
