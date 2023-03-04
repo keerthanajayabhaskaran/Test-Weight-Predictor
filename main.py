@@ -27,14 +27,42 @@ st.text_input("Enter your Name: ", key="name")
 #if st.checkbox('Show Training Dataframe'):
     #data
 st.subheader("Please Enter the Image ")
-filename = st.file_uploader("Choose an image file", type=["jpg", "jpeg", "png"])
+#filename = st.file_uploader("Choose an image file", type=["jpg", "jpeg", "png"])
 
+import streamlit as st
+import requests
+import base64
+import os
+from git import Repo
+
+# Use file uploader to get an image from the user
+uploaded_file = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png"])
+
+# Check if the user has uploaded a file
+if uploaded_file is not None:
+    # Read the contents of the uploaded file
+    file_contents = uploaded_file.read()
+
+    # Open a file for writing and save the uploaded file
+    with open("new_image.jpg", "wb") as f:
+        f.write(file_contents)
+
+    # Upload the file to the remote repository
+    repo_path = "https://github.com/keerthanajayabhaskaran/Test-Weight-Predictor.git"
+    repo = Repo.clone_from(repo_path, "/tmp/repo")
+    repo.index.add(["new_image.jpg"])
+    repo.index.commit("Add new image")
+    origin = repo.remote(name="origin")
+    origin.push()
+
+    # Display a success message
+    st.success("Image uploaded successfully!")
 
     # Save the image to the images folder in the Git repository
    
 
 W = 600
-#oriimg = cv2.imread(filename)
+oriimg = cv2.imread("new_image.jpg")
 height, width, depth = filename.shape
 imgScale = W/width
 newX,newY = oriimg.shape[1]*imgScale, oriimg.shape[0]*imgScale
