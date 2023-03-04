@@ -18,14 +18,23 @@ from imutils import contours
 import numpy as np
 import argparse
 import imutils
+import git
 
 st.header("Fish Weight Prediction App")
 st.text_input("Enter your Name: ", key="name")
+repo = git.Repo("https://github.com/keerthanajayabhaskaran/Test-Weight-Predictor.git")
 
 #if st.checkbox('Show Training Dataframe'):
     #data
 st.subheader("Please Enter the Image ")
 filename = st.file_uploader("Choose an image file", type=["jpg", "jpeg", "png"])
+
+if filename is not None:
+    # Save the image to the images folder in the Git repository
+    image_path = os.path.join(repo.working_tree_dir, "images", filename.name)
+    with open(image_path, "wb") as f:
+        f.write(uploaded_image.getbuffer())
+
 W = 600
 oriimg = cv2.imread(filename)
 height, width, depth = oriimg.shape
