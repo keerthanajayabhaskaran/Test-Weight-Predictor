@@ -49,7 +49,7 @@ if uploaded_file is not None:
 
     # Upload the file to the remote repository
     repo_path = "https://github.com/keerthanajayabhaskaran/Test-Weight-Predictor.git"
-    repo = Repo.clone_from(repo_path, "/tmp/repo")
+    repo = Repo.clone_from(repo_path, "https://github.com/keerthanajayabhaskaran/Test-Weight-Predictor.git")
     repo.index.add(["new_image.jpg"])
     repo.index.commit("Add new image")
     origin = repo.remote(name="origin")
