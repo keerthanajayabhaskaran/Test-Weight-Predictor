@@ -63,7 +63,7 @@ if uploaded_file is not None:
 
 W = 600
 oriimg = cv2.imread("new_image.jpg")
-height, width, depth = filename.shape
+height, width, depth = oriimg.shape
 imgScale = W/width
 newX,newY = oriimg.shape[1]*imgScale, oriimg.shape[0]*imgScale
 newimg = cv2.resize(oriimg,(int(newX),int(newY)))
