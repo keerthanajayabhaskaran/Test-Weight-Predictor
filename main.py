@@ -22,7 +22,7 @@ import git
 
 st.header("Fish Weight Prediction App")
 st.text_input("Enter your Name: ", key="name")
-repo = git.Repo("keerthanajayabhaskaran/Test-Weight-Predictor")
+repo = git.Repo("https://github.com/keerthanajayabhaskaran/Test-Weight-Predictor.git")
 
 #if st.checkbox('Show Training Dataframe'):
     #data
