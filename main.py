@@ -1,48 +1,201 @@
 import streamlit as st
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import  LabelEncoder
-import xgboost as xgb
+import cv2
+import math
+from matplotlib import pyplot as plt
+from cv2 import threshold, drawContours
 import numpy as np
+import matplotlib.pyplot as plt
+from skimage.io import imshow, imread
+from skimage.color import rgb2hsv, hsv2rgb
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import mean_squared_error, r2_score
+from scipy.spatial import distance as dist
+from imutils import perspective
+from imutils import contours
+import numpy as np
+import argparse
+import imutils
+
 st.header("Fish Weight Prediction App")
 st.text_input("Enter your Name: ", key="name")
-data = pd.read_csv("Fish.csv")
-#load label encoder
-encoder = LabelEncoder()
-encoder.classes_ = np.load('classes.npy',allow_pickle=True)
-
-# load model
-best_xgboost_model = xgb.XGBRegressor()
-best_xgboost_model.load_model("best_model.json")
 
 #if st.checkbox('Show Training Dataframe'):
     #data
+st.subheader("Please Enter the Image ")
+filename = st.file_uploader("Choose an image file", type=["jpg", "jpeg", "png"])
+W = 600
+oriimg = cv2.imread(filename)
+height, width, depth = oriimg.shape
+imgScale = W/width
+newX,newY = oriimg.shape[1]*imgScale, oriimg.shape[0]*imgScale
+newimg = cv2.resize(oriimg,(int(newX),int(newY)))
+#cv2.imshow("Show by CV2",newimg)
+cv2.waitKey(0)
+cv2.imwrite('resized.jpg',newimg)
+img = cv2.imread('resized.jpg')
+imgray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+edges = cv2.Canny(imgray,40,60)
 
-st.subheader("Please select fish dimensions")
-left_column, right_column = st.columns(2)
-with left_column:
-    inp_species = "Roach"
-    #inp_species = st.radio(
-        #'Name of the fish:',
-        #np.unique(data['Species']))
+# load the dataset
+df = pd.read_csv('Fish.csv')
+df_clean = df.drop(columns=['Species','Length1'],)
+# Splitting data into training and testing sets
+x = df_clean.drop(columns='Weight')
+y = df_clean['Weight']
 
 
-input_Length1 = st.slider('Vertical length(cm)', 0.0, max(data["Length1"]), 1.0)
-input_Length2 = st.slider('Diagonal length(cm)', 0.0, max(data["Length2"]), 1.0)
-#input_Length3 = st.slider('Cross length(cm)', 0.0, max(data["Length3"]), 1.0)
-#input_Length3 = 24.97
-input_Height = st.slider('Height(cm)', 0.0, max(data["Height"]), 1.0)
-#input_Width = st.slider('Diagonal width(cm)', 0.0, max(data["Width"]), 1.0)
-#input_Width = 3.65785
+# create polynomial features
+poly = PolynomialFeatures(degree=11)
+X_poly = poly.fit_transform(x)
 
+# train linear regression model on polynomial features
+model2 = LinearRegression().fit(X_poly, y)
+
+def midpoint(ptA, ptB):
+  return ((ptA[0] + ptB[0]) * 0.5, (ptA[1] + ptB[1]) * 0.5)
+
+image = cv2.imread("resized.jpg")
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+gray = cv2.GaussianBlur(gray, (7, 7), 0)
+cv2.imwrite('ref0.jpg', gray)
+
+# perform edge detection, then perform a dilation + erosion to
+# close gaps in between object edges
+
+edged = cv2.Canny(gray, 30,40)
+edged = cv2.dilate(edged, None, iterations=1)
+edged = cv2.erode(edged, None, iterations=1)
+#cv2.imshow("Im", edged)
+cv2.imwrite('ref1.jpg', edged)
+
+# find contours in the edge map
+cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL,
+  cv2.CHAIN_APPROX_SIMPLE)
+cnts = imutils.grab_contours(cnts)
+
+# sort the contours from left-to-right and initialize the
+# 'pixels per metric' calibration variable
+(cnts, _) = contours.sort_contours(cnts)
+pixelsPerMetric = None
+
+orig = image.copy()
+
+# loop over the contours individually
+for c in cnts:
+  # if the contour is not sufficiently large, ignore it
+  if cv2.contourArea(c) < 100:
+    continue
+ 
+  # compute the rotated bounding box of the contour
+  box = cv2.minAreaRect(c)
+  box = cv2.cv.BoxPoints(box) if imutils.is_cv2() else cv2.boxPoints(box)
+  box = np.array(box, dtype="int")
+ 
+  # order the points in the contour such that they appear
+  # in top-left, top-right, bottom-right, and bottom-left
+  # order, then draw the outline of the rotated bounding
+  # box
+  box = perspective.order_points(box)
+  cv2.drawContours(orig, [box.astype("int")], -1, (0, 255, 0), 2)
+  cv2.imwrite('ref2.jpg', cv2.drawContours(orig, [box.astype("int")], -1, (0, 255, 0), 2))
+ 
+  # loop over the original points and draw them
+  for (x, y) in box:
+    cv2.circle(orig, (int(x), int(y)), 5, (0, 0, 255), -1)
+
+  # unpack the ordered bounding box, then compute the midpoint
+  # between the top-left and top-right coordinates, followed by
+  # the midpoint between bottom-left and bottom-right coordinates
+  (tl, tr, br, bl) = box
+  (tltrX, tltrY) = midpoint(tl, tr)
+  (blbrX, blbrY) = midpoint(bl, br)
+ 
+  # compute the midpoint between the top-left and top-right points,
+  # followed by the midpoint between the top-righ and bottom-right
+  (tlblX, tlblY) = midpoint(tl, bl)
+  (trbrX, trbrY) = midpoint(tr, br)
+ 
+  # draw the midpoints on the image
+  cv2.circle(orig, (int(tltrX), int(tltrY)), 5, (255, 0, 0), -1)
+  cv2.circle(orig, (int(blbrX), int(blbrY)), 5, (255, 0, 0), -1)
+  cv2.circle(orig, (int(tlblX), int(tlblY)), 5, (255, 0, 0), -1)
+  cv2.circle(orig, (int(trbrX), int(trbrY)), 5, (255, 0, 0), -1)
+ 
+  # draw lines between the midpoints
+  cv2.line(orig, (int(tltrX), int(tltrY)), (int(blbrX), int(blbrY)),
+    (255, 0, 255), 2)
+  cv2.line(orig, (int(tlblX), int(tlblY)), (int(trbrX), int(trbrY)),
+    (255, 0, 255), 2)
+
+  cv2.imwrite("ref3.jpg",orig)
+  # compute the Euclidean distance between the midpoints
+  dA = dist.euclidean((tltrX, tltrY), (blbrX, blbrY))
+  dB = dist.euclidean((tlblX, tlblY), (trbrX, trbrY))
+ 
+  # if the pixels per metric has not been initialized, then
+  # compute it as the ratio of pixels to supplied metric
+  # (in this case, inches)
+  if pixelsPerMetric is None:
+    pixelsPerMetric = dB / 1
+
+  # compute the size of the object
+  dimA = dA / pixelsPerMetric
+  dimB = dB / pixelsPerMetric
+  if dimA<dimB:
+    dimA,dimB = dimB,dimA
+  dimA = 2.54*dimA
+  dimB = 2.54*dimB
+  dimC = math.sqrt((dimA**2)+(dimB**2))
+  input_str = "{},{},{},{}".format(dimA,dimC,dimB,1)
+  input_list = input_str.split(',')
+  input_arr = np.array(input_list).astype(float)
+
+# Reshape the input array to a row vector
+  input_arr = input_arr.reshape(1, -1)
+
+# Transform input array into polynomial features
+  input_poly = poly.transform(input_arr)
+
+# Make prediction using the trained model
+  weight = model2.predict(input_poly)
+  
+#  weight_poly=poly.fit_transform([dimA,dimC,dimB,1])
+#  weight = model2.predict(weight_poly)
+
+  #width = 1
+  if weight[0]<0:
+    weight = [4.0]
+  st.write("Length: ",dimA,"Breadth :",dimB,"Cross : ",dimC,"Weight : ",weight[0])
+ 
+  # draw the object sizes on the image
+  cv2.putText(orig, "{:.1f}cm".format(dimB),
+    (int(tltrX), int(tltrY)), cv2.FONT_HERSHEY_SIMPLEX,
+    0.65, (0,0,139), 2)
+  cv2.putText(orig, "{:.1f}cm".format(dimA),
+    (int(trbrX-50), int(trbrY)), cv2.FONT_HERSHEY_SIMPLEX,
+    0.65, (0,0,139), 2)
+  cv2.putText(orig, "{:.1f}cm".format(dimC),
+    (int(trbrX+10), int(trbrY-10)), cv2.FONT_HERSHEY_SIMPLEX,
+    0.65, (0,0,139), 2)
+  cv2.putText(orig, "{}g".format(weight),
+    (int(trbrX-100), int(trbrY+50)), cv2.FONT_HERSHEY_SIMPLEX,
+    0.5, (0,0,13),2)
+  
+
+  
+
+  # show the output image
+  #cv2.imshow("Image", orig)
+  cv2.imwrite('Final.jpg', orig)                                                  
+  cv2.waitKey(0)
 
 if st.button('Predict Fish Weight'):
-    input_species = encoder.transform(np.expand_dims(inp_species, -1))
-    inputs = np.expand_dims(
-        [int(input_species), input_Length1, input_Length2,input_Height], 0)
-    prediction = best_xgboost_model.predict(inputs)
-    print("final pred", np.squeeze(prediction, -1))
-    st.write(f"Your fish weight is: {np.squeeze(prediction, -1):.2f}g")
+    st.image(orig, caption='Weight and dimension predicted')
+    
+    #st.write(f"Your fish weight is: {np.squeeze(prediction, -1):.2f}g")
 
     st.write(f"Thank you {st.session_state.name}!")
     
