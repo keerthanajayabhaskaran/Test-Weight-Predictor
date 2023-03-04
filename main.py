@@ -37,6 +37,7 @@ from git import Repo
 
 # Use file uploader to get an image from the user
 uploaded_file = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png"])
+st.image(uploaded_file,caption="Your image")
 cwd = os.getcwd()
 # Check if the user has uploaded a file
 if uploaded_file is not None:
