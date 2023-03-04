@@ -45,25 +45,13 @@ if uploaded_file is not None:
     file_contents = uploaded_file.read()
 
     # Open a file for writing and save the uploaded file
-    with open("new_image.jpg", "wb") as f:
-        f.write(file_contents)
-
-    # Upload the file to the remote repository
-    repo_path = "https://github.com/keerthanajayabhaskaran/Test-Weight-Predictor.git"
-    repo = Repo.clone_from(repo_path, cwd)
-    repo.index.add(["new_image.jpg"])
-    repo.index.commit("Add new image")
-    origin = repo.remote(name="origin")
-    origin.push()
-
-    # Display a success message
-    st.success("Image uploaded successfully!")
+   
 
     # Save the image to the images folder in the Git repository
    
 
 W = 600
-oriimg = cv2.imread('new_image.jpg')
+oriimg = cv2.imread(file_contents)
 height, width, depth = oriimg.shape
 imgScale = W/width
 newX,newY = oriimg.shape[1]*imgScale, oriimg.shape[0]*imgScale
