@@ -19,7 +19,7 @@ import numpy as np
 import argparse
 import imutils
 import git
-
+import os
 st.header("Fish Weight Prediction App")
 st.text_input("Enter your Name: ", key="name")
 
@@ -37,7 +37,7 @@ from git import Repo
 
 # Use file uploader to get an image from the user
 uploaded_file = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png"])
-
+cwd = os.getcwd()
 # Check if the user has uploaded a file
 if uploaded_file is not None:
     # Read the contents of the uploaded file
@@ -49,7 +49,7 @@ if uploaded_file is not None:
 
     # Upload the file to the remote repository
     repo_path = "https://github.com/keerthanajayabhaskaran/Test-Weight-Predictor.git"
-    repo = Repo.clone_from(repo_path, "https://github.com/keerthanajayabhaskaran/Test-Weight-Predictor.git")
+    repo = Repo.clone_from(repo_path, cwd)
     repo.index.add(["new_image.jpg"])
     repo.index.commit("Add new image")
     origin = repo.remote(name="origin")
@@ -62,7 +62,7 @@ if uploaded_file is not None:
    
 
 W = 600
-oriimg = cv2.imread("new_image.jpg")
+oriimg = cv2.imread('new_image.jpg')
 height, width, depth = oriimg.shape
 imgScale = W/width
 newX,newY = oriimg.shape[1]*imgScale, oriimg.shape[0]*imgScale
