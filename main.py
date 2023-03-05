@@ -214,7 +214,7 @@ for c in cnts:
   # show the output image
   #cv2.imshow("Image", orig)
   cv2.imwrite('Final.jpg', orig)                                                  
-  cv2.waitKey(0)
+  #cv2.waitKey(0)
 
 if st.button('Predict Fish Weight'):
     st.image(orig, caption='Weight and dimension predicted')
