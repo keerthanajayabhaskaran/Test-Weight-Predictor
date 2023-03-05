@@ -51,7 +51,7 @@ if img is not None:
    
 
 W = 600
-oriimg = cv2.imread(img)
+oriimg = cv2.imread('new_image.jpg')
 height, width, depth = oriimg.shape
 imgScale = W/width
 newX,newY = oriimg.shape[1]*imgScale, oriimg.shape[0]*imgScale
