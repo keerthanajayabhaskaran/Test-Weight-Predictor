@@ -38,20 +38,20 @@ from git import Repo
 # Use file uploader to get an image from the user
 uploaded_file = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png"])
 st.image(uploaded_file,caption="Your image")
-cwd = os.getcwd()
-# Check if the user has uploaded a file
+import numpy as np
+import cv2
+
 if uploaded_file is not None:
-    # Read the contents of the uploaded file
-    file_contents = uploaded_file.read()
+    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+    img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+if img is not None:
+    cv2.imwrite('new_image.jpg', img)
+    st.success('Image saved successfully!')
 
-    # Open a file for writing and save the uploaded file
-   
-
-    # Save the image to the images folder in the Git repository
    
 
 W = 600
-oriimg = cv2.imread(file_contents)
+oriimg = cv2.imread(img)
 height, width, depth = oriimg.shape
 imgScale = W/width
 newX,newY = oriimg.shape[1]*imgScale, oriimg.shape[0]*imgScale
