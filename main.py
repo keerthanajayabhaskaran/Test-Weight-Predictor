@@ -48,10 +48,32 @@ if img is not None:
     cv2.imwrite('new_image.jpg', img)
     st.success('Image saved successfully!')
 
-   
+img = cv2.imread('new_image.jpg')
+
+# Apply a Gaussian blur filter to the input image
+blur = cv2.GaussianBlur(img, (51, 51), 0)
+
+# Create a mask to highlight the foreground object
+mask = cv2.inRange(blur, (0, 0, 0), (100, 100, 100))
+
+# Apply the mask to the input image to obtain the foreground object
+fg = cv2.bitwise_and(img, img, mask=mask)
+
+# Invert the mask to highlight the background region
+mask_inv = cv2.bitwise_not(mask)
+
+# Apply the inverted mask to the blurred image to obtain the background
+bg = cv2.bitwise_and(blur, blur, mask=mask_inv)
+
+# Combine the foreground and background images
+result = cv2.add(fg, bg)
+
+# Display the result
+cv2.imwrite('Result.jpg', result)
+ 
 
 W = 600
-oriimg = cv2.imread('new_image.jpg')
+oriimg = cv2.imread('Result.jpg')
 height, width, depth = oriimg.shape
 imgScale = W/width
 newX,newY = oriimg.shape[1]*imgScale, oriimg.shape[0]*imgScale
