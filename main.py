@@ -57,7 +57,7 @@ imgScale = W/width
 newX,newY = oriimg.shape[1]*imgScale, oriimg.shape[0]*imgScale
 newimg = cv2.resize(oriimg,(int(newX),int(newY)))
 #cv2.imshow("Show by CV2",newimg)
-cv2.waitKey(0)
+#cv2.waitKey(0)
 cv2.imwrite('resized.jpg',newimg)
 img = cv2.imread('resized.jpg')
 imgray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
