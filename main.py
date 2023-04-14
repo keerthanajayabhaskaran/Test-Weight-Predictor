@@ -186,7 +186,7 @@ for c in cnts:
   # compute it as the ratio of pixels to supplied metric
   # (in this case, inches)
   if pixelsPerMetric is None:
-    pixelsPerMetric = dB / 0.1
+    pixelsPerMetric = dB / 1
 
   # compute the size of the object
   dimA = dA / pixelsPerMetric
