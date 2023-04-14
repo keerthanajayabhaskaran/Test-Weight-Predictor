@@ -193,8 +193,8 @@ for c in cnts:
   dimB = dB / pixelsPerMetric
   if dimA<dimB:
     dimA,dimB = dimB,dimA
-  dimA = 2.54*dimA
-  dimB = 2.54*dimB
+  dimA = 30*dimA
+  dimB = 30*dimB
   dimC = math.sqrt((dimA**2)+(dimB**2))
   input_str = "{},{},{},{}".format(dimA,dimC,dimB,1)
   input_list = input_str.split(',')
