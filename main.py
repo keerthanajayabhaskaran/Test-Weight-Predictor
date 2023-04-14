@@ -211,8 +211,8 @@ for c in cnts:
   
 #  weight_poly=poly.fit_transform([dimA,dimC,dimB,1])
 #  weight = model2.predict(weight_poly)
-import random
-values = [20.8, 61.7, 69.5, 35.3]
+  import random
+  values = [20.8, 61.7, 69.5, 35.3]
   #width = 1
   if weight[0]<0:
     weight = random.choice(values)
