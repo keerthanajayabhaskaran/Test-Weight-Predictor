@@ -186,7 +186,7 @@ for c in cnts:
   # compute it as the ratio of pixels to supplied metric
   # (in this case, inches)
   if pixelsPerMetric is None:
-    pixelsPerMetric = dB / 1
+    pixelsPerMetric = dB / 10
 
   # compute the size of the object
   dimA = dA / pixelsPerMetric
@@ -194,7 +194,7 @@ for c in cnts:
   if dimA<dimB:
     dimA,dimB = dimB,dimA
   dimA = 2.54*dimA
-  dimB = 2.54*dimB*0.01
+  dimB = 2.54*dimB
   dimC = math.sqrt((dimA**2)+(dimB**2))
   input_str = "{},{},{},{}".format(dimA,dimC,dimB,1)
   input_list = input_str.split(',')
