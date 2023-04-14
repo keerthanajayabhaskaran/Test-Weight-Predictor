@@ -20,6 +20,7 @@ import argparse
 import imutils
 import git
 import os
+import random
 st.header("Fish Weight Prediction App")
 st.text_input("Enter your Name: ", key="name")
 
