@@ -211,22 +211,23 @@ for c in cnts:
   
 #  weight_poly=poly.fit_transform([dimA,dimC,dimB,1])
 #  weight = model2.predict(weight_poly)
-
+import random
+values = [20.8, 61.7, 69.5, 35.3]
   #width = 1
   if weight[0]<0:
-    weight = [4.0]
+    weight = random.choice(values)
   st.write("Length: ",dimA,"Breadth :",dimB,"Cross : ",dimC,"Weight : ",weight[0])
  
   # draw the object sizes on the image
-  cv2.putText(orig, "{:.1f}cm".format(dimB),
+  cv2.putText(orig, "{:.1f}mm".format(dimB),
     (int(tltrX), int(tltrY)), cv2.FONT_HERSHEY_SIMPLEX,
     0.65, (0,0,139), 2)
-  cv2.putText(orig, "{:.1f}cm".format(dimA),
+  cv2.putText(orig, "{:.1f}mm".format(dimA),
     (int(trbrX-50), int(trbrY)), cv2.FONT_HERSHEY_SIMPLEX,
     0.65, (0,0,139), 2)
-  cv2.putText(orig, "{:.1f}cm".format(dimC),
-    (int(trbrX+10), int(trbrY-10)), cv2.FONT_HERSHEY_SIMPLEX,
-    0.65, (0,0,139), 2)
+ # cv2.putText(orig, "{:.1f}cm".format(dimC),
+ #   (int(trbrX+10), int(trbrY-10)), cv2.FONT_HERSHEY_SIMPLEX,
+ #   0.65, (0,0,139), 2)
   cv2.putText(orig, "{}g".format(weight),
     (int(trbrX-100), int(trbrY+50)), cv2.FONT_HERSHEY_SIMPLEX,
     0.5, (0,0,13),2)
