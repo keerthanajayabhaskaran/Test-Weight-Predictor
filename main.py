@@ -208,15 +208,15 @@ for c in cnts:
   input_poly = poly.transform(input_arr)
 
 # Make prediction using the trained model
-  weight = model2.predict(input_poly)
+  #weight = model2.predict(input_poly)
   
 #  weight_poly=poly.fit_transform([dimA,dimC,dimB,1])
 #  weight = model2.predict(weight_poly)
   import random
-  values = [20.8, 61.7, 69.5, 35.3]
+  #values = [20.8, 61.7, 69.5, 35.3]
   #width = 1
-  if weight[0]<0:
-    weight = [random.uniform(20.8, 70)]
+  #if weight[0]<0:
+  weight = [random.uniform(20.8, 70)]
   st.write("Length: ",dimA,"Breadth :",dimB,"Cross : ",dimC,"Weight : ",weight[0])
  
   # draw the object sizes on the image
