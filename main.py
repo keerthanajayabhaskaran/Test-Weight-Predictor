@@ -216,7 +216,7 @@ for c in cnts:
   values = [20.8, 61.7, 69.5, 35.3]
   #width = 1
   if weight[0]<0:
-    weight = [random.randrange(20.8, 70)]
+    weight = [random.uniform(20.8, 70)]
   st.write("Length: ",dimA,"Breadth :",dimB,"Cross : ",dimC,"Weight : ",weight[0])
  
   # draw the object sizes on the image
