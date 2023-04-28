@@ -229,7 +229,7 @@ for c in cnts:
  # cv2.putText(orig, "{:.1f}cm".format(dimC),
  #   (int(trbrX+10), int(trbrY-10)), cv2.FONT_HERSHEY_SIMPLEX,
  #   0.65, (0,0,139), 2)
-  cv2.putText(orig, "{}g".format(weight),
+  cv2.putText(orig, "{}mg".format(weight),
     (int(trbrX-100), int(trbrY+50)), cv2.FONT_HERSHEY_SIMPLEX,
     0.5, (0,0,13),2)
   
